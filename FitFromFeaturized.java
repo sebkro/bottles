@@ -13,6 +13,7 @@ import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.transferlearning.TransferLearningHelper;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
 import org.nd4j.linalg.activations.Activation;
@@ -20,6 +21,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -41,7 +43,7 @@ public class FitFromFeaturized {
     public static final String featureExtractionLayer = FeaturizedPreSave.featurizeExtractionLayer;
     protected static final long seed = 12345;
     protected static final int numClasses = 2;
-    protected static final int nEpochs = 3;
+    protected static final int nEpochs = 7;
 
     public static void main(String [] args) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
 
@@ -110,5 +112,8 @@ public class FitFromFeaturized {
             log.info("Epoch #"+epoch+" complete");
         }
         log.info("Model build complete");
+        File locationToSave = new File("/Users/kromes/Documents/cnn/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
+        boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
+        ModelSerializer.writeModel(vgg16Transfer, locationToSave, saveUpdater);
     }
 }
