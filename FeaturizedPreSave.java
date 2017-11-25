@@ -26,7 +26,7 @@ public class FeaturizedPreSave {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FeaturizedPreSave.class);
     private static final int trainPerc = 80;
     private static final int batchSize = 15;
-    public static final String featurizeExtractionLayer = "fc2";
+    public static final String featurizeExtractionLayer = "fc1";
 
     public static final String featureFolder = Configuration.baseFolder() + "/features/bottles/";
     public static final String trainFolder = featureFolder + "trainFolder";

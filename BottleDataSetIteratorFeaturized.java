@@ -36,10 +36,10 @@ public class BottleDataSetIteratorFeaturized {
     }
 
     private static void runFeaturize() throws InvalidKerasConfigurationException, IOException, UnsupportedKerasConfigurationException {
-        File trainDir = new File("trainFolder","bottles-"+featureExtractorLayer+"-train-0.bin");
+        log.info("Load featured data from" + FeaturizedPreSave.trainFolder);
+    	File trainDir = new File(FeaturizedPreSave.trainFolder,"bottles-"+featureExtractorLayer+"-train-0.bin");
         if (!trainDir.isFile()) {
-            log.info("\n\tFEATURIZED DATA NOT FOUND. \n\t\tRUNNING \"FeaturizedPreSave\" first to do presave of featurized data");
-            FeaturizedPreSave.main(null);
+            throw new RuntimeException(trainDir.getAbsolutePath() + " npt found");
         }
     }
 }

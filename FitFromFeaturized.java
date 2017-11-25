@@ -42,7 +42,7 @@ public class FitFromFeaturized {
     public static final String featureExtractionLayer = FeaturizedPreSave.featurizeExtractionLayer;
     protected static final long seed = 12345;
     protected static final int numClasses = 2;
-    protected static final int nEpochs = 7;
+    protected static final int nEpochs = 15;
 
     public static void main(String [] args) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
 
@@ -100,6 +100,9 @@ public class FitFromFeaturized {
             while (trainIter.hasNext()) {
                 transferLearningHelper.fitFeaturized(trainIter.next());
                 if (iter % 10 == 0) {
+                	log.info("Evaluate model at iter " + iter + " .... with train data");
+                	Evaluation evalTrain = transferLearningHelper.unfrozenGraph().evaluate(trainIter);
+                	log.info(evalTrain.stats());
                     log.info("Evaluate model at iter " + iter + " ....");
                     Evaluation eval = transferLearningHelper.unfrozenGraph().evaluate(testIter);
                     log.info(eval.stats());
