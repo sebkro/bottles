@@ -12,6 +12,14 @@ gesamte Model gespeichert.
 - Im letzten Schritt wird das Modell geladen (LoadBottleComputationGraph) und die Bilder des bisher zurückgehaltenen 
 Test-Sets werden geprüft.
 
+--> Mit diesem Ansatz haben wir eine Accuracy von 94% erreicht - das war leider zu schön um wahr zu sein. Im Vergleich 
+mit einigen neu erzeugten Testdatzen sind wir nämlich nur auf 64% gekommen. 
+Die Vermutung: Das Netz hat vielleicht auf falsche Merkmale trainiert, da positive und negative Daten nacheinander erstellt wurden.
+
+Vorgehen 2:
+Das nächste Trainings-/Testset wurde erstellt, indem immer zwei Bilder mit identischer Kastenkonstellation mit 
+zusätzlichen falsch plazierten Flaschen für das 'bad'-Set erstellt wurden.
+ 
 
 
 
