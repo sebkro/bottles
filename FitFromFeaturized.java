@@ -1,7 +1,6 @@
 package org.hackathon.bottles;
 
 import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.examples.transferlearning.vgg16.dataHelpers.FeaturizedPreSave;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
@@ -112,7 +111,7 @@ public class FitFromFeaturized {
             log.info("Epoch #"+epoch+" complete");
         }
         log.info("Model build complete");
-        File locationToSave = new File("/Users/kromes/Documents/cnn/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
+        File locationToSave = new File(Configuration.baseFolder() + "/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
         boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
         ModelSerializer.writeModel(vgg16Transfer, locationToSave, saveUpdater);
     }

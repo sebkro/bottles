@@ -29,10 +29,10 @@ public class LoadBottleComputationGraph {
 
     public static void main(String[] args) throws Exception {
         //Load the model
-    	File locationToSave = new File("/Users/kromes/Documents/cnn/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
+    	File locationToSave = new File(Configuration.baseFolder() + "/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
         ComputationGraph restored = ModelSerializer.restoreComputationGraph(locationToSave);
         
-        BottlesDataSetIterator.setup(15,80);
+        BottlesDataSetIterator.setup(15,20);
         DataSetIterator trainIter = BottlesDataSetIterator.trainIterator();
         DataSetIterator testIter = BottlesDataSetIterator.testIterator();
 
