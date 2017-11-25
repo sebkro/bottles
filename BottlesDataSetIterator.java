@@ -20,11 +20,11 @@ import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.slf4j.Logger;
 
 public class BottlesDataSetIterator {
-	
+
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(FlowerDataSetIterator.class);
 
     private static final String DATA_DIR = new File(System.getProperty("user.home")) + "/dl4jDataDir";
-    private static final String BOTTLES_DIR = DATA_DIR + "/bottle_photos2";
+    private static final String BOTTLES_DIR = DATA_DIR + "/bottle_photos";
 
     private static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
     private static final Random rng  = new Random(13);

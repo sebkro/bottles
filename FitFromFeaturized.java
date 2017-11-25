@@ -1,7 +1,9 @@
 package org.hackathon.bottles;
 
+import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
+import org.deeplearning4j.nn.conf.LearningRatePolicy;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
@@ -12,6 +14,9 @@ import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.transferlearning.TransferLearningHelper;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.stats.StatsListener;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
@@ -22,6 +27,8 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author susaneraly on 3/10/17.
@@ -42,9 +49,27 @@ public class FitFromFeaturized {
     public static final String featureExtractionLayer = FeaturizedPreSave.featurizeExtractionLayer;
     protected static final long seed = 12345;
     protected static final int numClasses = 2;
-    protected static final int nEpochs = 15;
+    protected static final int nEpochs = 150;
 
     public static void main(String [] args) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+
+        //Initialize the user interface backend
+        UIServer uiServer = UIServer.getInstance();
+
+        //Configure where the network information (gradients, score vs. time etc) is to be stored. Here: store in memory.
+        StatsStorage statsStorage = new InMemoryStatsStorage();         //Alternative: new FileStatsStorage(File), for saving and loading later
+
+        //Attach the StatsStorage instance to the UI: this allows the contents of the StatsStorage to be visualized
+        uiServer.attach(statsStorage);
+
+
+        // learning rate schedule in the form of <Iteration #, Learning Rate>
+        Map<Integer, Double> lrSchedule = new HashMap<>();
+        lrSchedule.put(0, 3e-3);
+        lrSchedule.put(40, 3e-4);
+//        lrSchedule.put(90, 3e-4);
+        lrSchedule.put(120, 3e-5);
+        lrSchedule.put(200, 3e-6);
 
         //Import vgg
         //Note that the model imported does not have an output layer (check printed summary)
@@ -54,11 +79,14 @@ public class FitFromFeaturized {
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained();
         log.info(vgg16.summary());
 
+
         //Decide on a fine tune configuration to use.
         //In cases where there already exists a setting the fine tune setting will
         //  override the setting for all layers that are not "frozen".
         FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
-            .learningRate(3e-5)
+//            .learningRate(3e-6)
+            .learningRatePolicy(LearningRatePolicy.Schedule)
+            .learningRateSchedule(lrSchedule)
             .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
             .updater(Updater.NESTEROVS)
             .seed(seed)
@@ -89,6 +117,9 @@ public class FitFromFeaturized {
         TransferLearningHelper transferLearningHelper = new TransferLearningHelper(vgg16Transfer);
         log.info(transferLearningHelper.unfrozenGraph().summary());
 
+        //Then add the StatsListener to collect this information from the network, as it trains
+        transferLearningHelper.unfrozenGraph().setListeners(new StatsListener(statsStorage));
+
         for (int epoch = 0; epoch < nEpochs; epoch++) {
             if (epoch == 0) {
                 Evaluation eval = transferLearningHelper.unfrozenGraph().evaluate(testIter);
@@ -112,6 +143,7 @@ public class FitFromFeaturized {
             }
             trainIter.reset();
             log.info("Epoch #"+epoch+" complete");
+
         }
         log.info("Model build complete");
         File locationToSave = new File(Configuration.baseFolder() + "/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally

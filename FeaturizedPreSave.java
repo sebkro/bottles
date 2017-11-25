@@ -1,11 +1,15 @@
 package org.hackathon.bottles;
 
+import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.modelimport.keras.InvalidKerasConfigurationException;
 import org.deeplearning4j.nn.modelimport.keras.UnsupportedKerasConfigurationException;
 import org.deeplearning4j.nn.modelimport.keras.trainedmodels.TrainedModelHelper;
 import org.deeplearning4j.nn.modelimport.keras.trainedmodels.TrainedModels;
 import org.deeplearning4j.nn.transferlearning.TransferLearningHelper;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.stats.StatsListener;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
 import org.nd4j.linalg.dataset.DataSet;
@@ -25,20 +29,21 @@ public class FeaturizedPreSave {
     private static final String featureFilenamePrefix = "bottles-";
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FeaturizedPreSave.class);
     private static final int trainPerc = 80;
-    private static final int batchSize = 15;
-    public static final String featurizeExtractionLayer = "fc1";
+    private static final int batchSize = 25;
+    public static final String featurizeExtractionLayer = "fc1"; //block5_conv3
 
     public static final String featureFolder = Configuration.baseFolder() + "/features/bottles/";
     public static final String trainFolder = featureFolder + "trainFolder";
     public static final String testFolder = featureFolder + "testFolder";
 
     public static void main(String [] args) throws UnsupportedKerasConfigurationException, IOException, InvalidKerasConfigurationException {
+
         //import org.deeplearning4j.transferlearning.vgg16 and print summary
-    	System.out.println("bla");
         LOGGER.info("\n\nLoading org.deeplearning4j.transferlearning.vgg16...\n\n");
         ZooModel zooModel = new VGG16();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained();
         LOGGER.info(vgg16.summary());
+
 
         //use the TransferLearningHelper to freeze the specified vertices and below
         //NOTE: This is done in place! Pass in a cloned version of the model if you would prefer to not do this in place

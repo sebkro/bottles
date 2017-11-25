@@ -22,6 +22,8 @@ zusätzlichen falsch plazierten Flaschen für das 'bad'-Set erstellt wurden.
  
 
 
-
-
+Arbeitsreihenfolge:
+- FeaturizedPreSave - Aktivierung der letzten SChicht für alle Bilder vorberechnen
+- FitFromFeaturized - Trainieren der letzten Schichten
+- LoadBottleComputationGraph - Anwenden des Netzes auf das TestSet
 
