@@ -1,7 +1,6 @@
 package org.hackathon.bottles;
 
 import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.examples.transferlearning.vgg16.dataHelpers.FeaturizedPreSave;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
@@ -43,7 +42,7 @@ public class FitFromFeaturized {
     public static final String featureExtractionLayer = FeaturizedPreSave.featurizeExtractionLayer;
     protected static final long seed = 12345;
     protected static final int numClasses = 2;
-    protected static final int nEpochs = 7;
+    protected static final int nEpochs = 15;
 
     public static void main(String [] args) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
 
@@ -101,6 +100,9 @@ public class FitFromFeaturized {
             while (trainIter.hasNext()) {
                 transferLearningHelper.fitFeaturized(trainIter.next());
                 if (iter % 10 == 0) {
+                	log.info("Evaluate model at iter " + iter + " .... with train data");
+                	Evaluation evalTrain = transferLearningHelper.unfrozenGraph().evaluate(trainIter);
+                	log.info(evalTrain.stats());
                     log.info("Evaluate model at iter " + iter + " ....");
                     Evaluation eval = transferLearningHelper.unfrozenGraph().evaluate(testIter);
                     log.info(eval.stats());
@@ -112,7 +114,7 @@ public class FitFromFeaturized {
             log.info("Epoch #"+epoch+" complete");
         }
         log.info("Model build complete");
-        File locationToSave = new File("/Users/kromes/Documents/cnn/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
+        File locationToSave = new File(Configuration.baseFolder() + "/trainedModels/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
         boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
         ModelSerializer.writeModel(vgg16Transfer, locationToSave, saveUpdater);
     }
