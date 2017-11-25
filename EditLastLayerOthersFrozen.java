@@ -83,7 +83,7 @@ public class EditLastLayerOthersFrozen {
         log.info(vgg16Transfer.summary());
 
         //Dataset iterators
-        
+
         BottlesDataSetIterator.setup(batchSize,trainPerc);
         DataSetIterator trainIter = BottlesDataSetIterator.trainIterator();
         DataSetIterator testIter = BottlesDataSetIterator.testIterator();
@@ -93,8 +93,8 @@ public class EditLastLayerOthersFrozen {
         log.info("Eval stats BEFORE fit.....");
         log.info(eval.stats() + "\n");
         testIter.reset();
-        
-        File locationToSave = new File("/Users/kromes/Documents/cnn/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
+
+        File locationToSave = new File(Configuration.baseFolder() + "/Documents/cnn/bottlenet.zip");       //Where to save the network. Note: the file is in .zip format - can be opened externally
         boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
 
         int iter = 0;
