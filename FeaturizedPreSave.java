@@ -22,7 +22,8 @@ import java.io.IOException;
  * @author susaneraly on 2/28/17.
  */
 public class FeaturizedPreSave {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeaturizedPreSave.class);
+    private static final String featureFilenamePrefix = "bottles-";
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FeaturizedPreSave.class);
     private static final int trainPerc = 80;
     private static final int batchSize = 15;
     public static final String featurizeExtractionLayer = "fc2";
@@ -32,8 +33,8 @@ public class FeaturizedPreSave {
     public static final String testFolder = featureFolder + "testFolder";
 
     public static void main(String [] args) throws UnsupportedKerasConfigurationException, IOException, InvalidKerasConfigurationException {
-
         //import org.deeplearning4j.transferlearning.vgg16 and print summary
+    	System.out.println("bla");
         LOGGER.info("\n\nLoading org.deeplearning4j.transferlearning.vgg16...\n\n");
         ZooModel zooModel = new VGG16();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained();
@@ -50,7 +51,11 @@ public class FeaturizedPreSave {
 
         int trainDataSaved = 0;
         while(trainIter.hasNext()) {
-            DataSet currentFeaturized = transferLearningHelper.featurize(trainIter.next());
+        	LOGGER.info("next trainIter");
+            DataSet nextBlock = trainIter.next();
+            LOGGER.info("featurize next block");
+			DataSet currentFeaturized = transferLearningHelper.featurize(nextBlock);
+			LOGGER.info("featurized next block");
             saveToDisk(currentFeaturized,trainDataSaved,true);
             trainDataSaved++;
         }
@@ -70,10 +75,10 @@ public class FeaturizedPreSave {
         if (iterNum == 0) {
             fileFolder.mkdirs();
         }
-        String fileName = "bottles-" + featurizeExtractionLayer + "-";
+        String fileName = featureFilenamePrefix + featurizeExtractionLayer + "-";
         fileName += isTrain ? "train-" : "test-";
         fileName += iterNum + ".bin";
         currentFeaturized.save(new File(fileFolder,fileName));
-        LOGGER.info("Saved " + (isTrain?"train ":"test ") + "dataset #"+ iterNum);
+        LOGGER.info("Saved " + (isTrain?"train ":"test ") + "dataset #"+ iterNum + " to " + fileFolder + "/" + fileName) ;
     }
 }

@@ -2,7 +2,6 @@ package org.hackathon.bottles;
 
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.examples.transferlearning.vgg16.dataHelpers.FeaturizedPreSave;
-import org.deeplearning4j.examples.transferlearning.vgg16.dataHelpers.FlowerDataSetIteratorFeaturized;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
@@ -79,8 +78,8 @@ public class FitFromFeaturized {
             .build();
         log.info(vgg16Transfer.summary());
 
-        DataSetIterator trainIter = FlowerDataSetIteratorFeaturized.trainIterator();
-        DataSetIterator testIter = FlowerDataSetIteratorFeaturized.testIterator();
+        DataSetIterator trainIter = BottleDataSetIteratorFeaturized.trainIterator();
+        DataSetIterator testIter = BottleDataSetIteratorFeaturized.testIterator();
 
         //Instantiate the transfer learning helper to fit and output from the featurized dataset
         //The .unfrozenGraph() is the unfrozen subset of the computation graph passed in.
